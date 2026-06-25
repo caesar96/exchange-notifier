@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Exchange Notifier</string>
+    <string name="pair_label">USD / MXN</string>
+    <string name="settings">Configuración</string>
+    <string name="back">Atrás</string>
+
+    <!-- Main screen -->
+    <string name="no_connection">Sin conexión</string>
+    <string name="last_value">Último: %s</string>
+    <string name="retry">Reintentar</string>
+    <string name="updated_at">Actualizado: %s</string>
+    <string name="refresh">Actualizar</string>
+
+    <!-- Chart periods -->
+    <string name="period_today">Hoy</string>
+    <string name="period_1w">1S</string>
+    <string name="period_1m">1M</string>
+    <string name="period_1y">1A</string>
+    <string name="period_max">Máx</string>
+
+    <!-- Settings screen -->
+    <string name="section_alerts">ALERTAS</string>
+    <string name="upper_threshold">Umbral superior</string>
+    <string name="upper_threshold_hint">p.ej. 18.50</string>
+    <string name="lower_threshold">Umbral inferior</string>
+    <string name="lower_threshold_hint">p.ej. 17.00</string>
+    <string name="section_monitoring">MONITOREO</string>
+    <string name="check_interval">Intervalo de verificación</string>
+    <string name="check_now">Verificar ahora</string>
+    <string name="section_history">HISTORIAL</string>
+    <string name="retain_days">Retener datos: %d días</string>
+    <string name="clear_history">Limpiar historial</string>
+    <string name="clear_history_title">¿Limpiar historial?</string>
+    <string name="clear_history_message">Se eliminarán todos los registros de tipo de cambio guardados localmente.</string>
+    <string name="clear">Limpiar</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Alertas de tipo de cambio</string>
+    <string name="notification_channel_desc">Avisa cuando USD/MXN cruza tus umbrales</string>
+    <string name="notification_above_title">USD/MXN subió por encima del umbral</string>
+    <string name="notification_above_body">Tipo de cambio: %1$s (umbral superior: %2$s)</string>
+    <string name="notification_below_title">USD/MXN bajó por debajo del umbral</string>
+    <string name="notification_below_body">Tipo de cambio: %1$s (umbral inferior: %2$s)</string>
+</resources>

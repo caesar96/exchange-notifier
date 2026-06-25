@@ -1,0 +1,98 @@
+[versions]
+agp                  = "8.5.2"
+kotlin               = "2.0.21"
+ksp                  = "2.0.21-1.0.25"
+
+# AndroidX
+coreKtx              = "1.13.1"
+activityCompose      = "1.9.2"
+lifecycleRuntime     = "2.8.6"
+lifecycleViewModel   = "2.8.6"
+navigationCompose    = "2.8.3"
+datastore            = "1.1.1"
+
+# Compose
+composeBom           = "2024.09.03"
+
+# Hilt (DI)
+hilt                 = "2.52"
+hiltNavigationCompose = "1.2.0"
+
+# Networking
+retrofit             = "2.11.0"
+okhttp               = "4.12.0"
+retrofitKotlinxSerializer = "1.0.0"    # Jake Wharton's converter
+
+# Serialization
+kotlinxSerialization = "1.7.3"
+
+# Room
+room                 = "2.6.1"
+
+# WorkManager
+workmanager          = "2.9.1"
+
+# Splash screen
+splashscreen         = "1.0.1"
+
+
+[libraries]
+# AndroidX Core
+androidx-core-ktx            = { group = "androidx.core",       name = "core-ktx",              version.ref = "coreKtx" }
+androidx-activity-compose    = { group = "androidx.activity",   name = "activity-compose",      version.ref = "activityCompose" }
+androidx-lifecycle-runtime   = { group = "androidx.lifecycle",  name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntime" }
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle",  name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModel" }
+androidx-navigation-compose  = { group = "androidx.navigation", name = "navigation-compose",    version.ref = "navigationCompose" }
+androidx-datastore-prefs     = { group = "androidx.datastore",  name = "datastore-preferences", version.ref = "datastore" }
+
+# Compose BOM + artifacts
+compose-bom          = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-ui           = { group = "androidx.compose.ui",       name = "ui" }
+compose-ui-graphics  = { group = "androidx.compose.ui",       name = "ui-graphics" }
+compose-ui-tooling   = { group = "androidx.compose.ui",       name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-test-manifest   = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-ui-test-junit4     = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+compose-material3    = { group = "androidx.compose.material3", name = "material3" }
+compose-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+
+# Hilt
+hilt-android         = { group = "com.google.dagger", name = "hilt-android",           version.ref = "hilt" }
+hilt-compiler        = { group = "com.google.dagger", name = "hilt-android-compiler",  version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+hilt-work            = { group = "androidx.hilt",    name = "hilt-work",               version = "1.2.0" }
+hilt-work-compiler   = { group = "androidx.hilt",    name = "hilt-compiler",           version = "1.2.0" }
+
+# Networking
+retrofit             = { group = "com.squareup.retrofit2", name = "retrofit",                         version.ref = "retrofit" }
+retrofit-kotlinx-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerializer" }
+okhttp               = { group = "com.squareup.okhttp3",  name = "okhttp",                            version.ref = "okhttp" }
+okhttp-logging       = { group = "com.squareup.okhttp3",  name = "logging-interceptor",               version.ref = "okhttp" }
+
+# Serialization
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# Room
+room-runtime         = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx             = { group = "androidx.room", name = "room-ktx",     version.ref = "room" }
+room-compiler        = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# WorkManager
+workmanager-ktx      = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
+
+# Splash screen
+core-splashscreen    = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+
+
+# Testing
+junit                = { group = "junit",        name = "junit",            version = "4.13.2" }
+androidx-test-junit  = { group = "androidx.test.ext", name = "junit",      version = "1.2.1" }
+androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version = "3.6.1" }
+
+[plugins]
+android-application      = { id = "com.android.application",            version.ref = "agp" }
+kotlin-android           = { id = "org.jetbrains.kotlin.android",       version.ref = "kotlin" }
+kotlin-compose           = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization     = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+hilt                     = { id = "com.google.dagger.hilt.android",     version.ref = "hilt" }
+ksp                      = { id = "com.google.devtools.ksp",            version.ref = "ksp" }

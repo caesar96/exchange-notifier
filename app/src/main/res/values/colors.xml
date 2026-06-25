@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material3 surface color — shown as window bg before Compose draws -->
+    <color name="window_bg">#FFFFFBFE</color>
+    <!-- Circle behind the splash icon (same in light and dark) -->
+    <color name="splash_icon_bg">#FF1565C0</color>
+</resources>
