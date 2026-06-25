@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class RateSnapshotEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val rate: Double,
-    val timestampMillis: Long   // epoch milliseconds; avoids needing a TypeConverter for Instant
+    val timestampMillis: Long,
+    val pairKey: String,
 )

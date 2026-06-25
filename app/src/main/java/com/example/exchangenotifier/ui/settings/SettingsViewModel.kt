@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.exchangenotifier.data.datastore.AppPreferences
 import com.example.exchangenotifier.data.datastore.PreferencesRepository
 import com.example.exchangenotifier.data.provider.CompositeRateProvider
+import com.example.exchangenotifier.domain.model.CurrencyPair
 import com.example.exchangenotifier.domain.provider.RateProvider
 import com.example.exchangenotifier.domain.repository.ExchangeRateRepository
 import com.example.exchangenotifier.notification.NotificationHelper
@@ -36,6 +37,7 @@ class SettingsViewModel @Inject constructor(
             wasAboveUpper = false, wasBelowLower = false,
             historyRetentionDays = 7,
             preferredProvider = CompositeRateProvider.PROVIDER_AUTO,
+            selectedPairKey = CurrencyPair.DEFAULT.key,
         )
     )
 

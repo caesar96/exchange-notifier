@@ -36,10 +36,10 @@ class NotificationHelper @Inject constructor(
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun notifyAboveUpper(rate: Double, threshold: Double) = post(
+    fun notifyAboveUpper(pairLabel: String, rate: Double, threshold: Double) = post(
         id       = ID_ABOVE,
         iconRes  = R.drawable.ic_notification_up,
-        title    = context.getString(R.string.notification_above_title),
+        title    = context.getString(R.string.notification_above_title, pairLabel),
         body     = context.getString(
             R.string.notification_above_body,
             "%.4f".format(rate),
@@ -47,10 +47,10 @@ class NotificationHelper @Inject constructor(
         )
     )
 
-    fun notifyBelowLower(rate: Double, threshold: Double) = post(
+    fun notifyBelowLower(pairLabel: String, rate: Double, threshold: Double) = post(
         id       = ID_BELOW,
         iconRes  = R.drawable.ic_notification_down,
-        title    = context.getString(R.string.notification_below_title),
+        title    = context.getString(R.string.notification_below_title, pairLabel),
         body     = context.getString(
             R.string.notification_below_body,
             "%.4f".format(rate),

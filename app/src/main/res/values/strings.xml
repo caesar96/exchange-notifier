@@ -37,6 +37,12 @@
     <string name="clear">Clear</string>
     <string name="cancel">Cancel</string>
 
+    <!-- Currency pair picker -->
+    <string name="select_pair">Select currency pair</string>
+    <string name="base_currency">Base</string>
+    <string name="quote_currency">Quote</string>
+    <string name="select">Select</string>
+
     <!-- Data source -->
     <string name="section_data_source">DATA SOURCE</string>
     <string name="provider_auto">Auto</string>
@@ -48,9 +54,9 @@
 
     <!-- Notifications -->
     <string name="notification_channel_name">Exchange Rate Alerts</string>
-    <string name="notification_channel_desc">Alerts when USD/MXN crosses your thresholds</string>
-    <string name="notification_above_title">USD/MXN rose above threshold</string>
+    <string name="notification_channel_desc">Alerts when an exchange rate crosses your thresholds</string>
+    <string name="notification_above_title">%1$s rose above threshold</string>
     <string name="notification_above_body">Rate: %1$s (upper threshold: %2$s)</string>
-    <string name="notification_below_title">USD/MXN fell below threshold</string>
+    <string name="notification_below_title">%1$s fell below threshold</string>
     <string name="notification_below_body">Rate: %1$s (lower threshold: %2$s)</string>
 </resources>

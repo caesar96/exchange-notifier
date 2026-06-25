@@ -9,6 +9,6 @@ interface RateProvider {
     /** True when the provider exposes historical daily series (not just the latest quote). */
     val supportsTimeSeries: Boolean
 
-    suspend fun fetchLatestRate(): Result<Double>
-    suspend fun fetchSeries(from: LocalDate, to: LocalDate): Result<List<RatePoint>>
+    suspend fun fetchLatestRate(base: String, quote: String): Result<Double>
+    suspend fun fetchSeries(base: String, quote: String, from: LocalDate, to: LocalDate): Result<List<RatePoint>>
 }

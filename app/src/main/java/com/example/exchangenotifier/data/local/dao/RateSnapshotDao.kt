@@ -12,9 +12,9 @@ interface RateSnapshotDao {
     @Insert
     suspend fun insert(entity: RateSnapshotEntity)
 
-    /** Live stream of snapshots from [fromMillis] onward — used by the intraday chart. */
-    @Query("SELECT * FROM rate_snapshots WHERE timestampMillis >= :fromMillis ORDER BY timestampMillis ASC")
-    fun observeSnapshotsAfter(fromMillis: Long): Flow<List<RateSnapshotEntity>>
+    /** Live stream of snapshots for a specific pair from [fromMillis] onward — used by the intraday chart. */
+    @Query("SELECT * FROM rate_snapshots WHERE pairKey = :pairKey AND timestampMillis >= :fromMillis ORDER BY timestampMillis ASC")
+    fun observeSnapshotsAfter(pairKey: String, fromMillis: Long): Flow<List<RateSnapshotEntity>>
 
     /** One-shot range query. */
     @Query("SELECT * FROM rate_snapshots WHERE timestampMillis BETWEEN :fromMillis AND :toMillis ORDER BY timestampMillis ASC")

@@ -22,30 +22,22 @@ class CompositeRateProvider @Inject constructor(
     /** Providers that expose historical series data. */
     private val seriesCapable: List<RateProvider> = all.filter { it.supportsTimeSeries }
 
-    /**
-     * Fetches the current rate. Tries the user's preferred provider first;
-     * if it fails, falls back to the remaining providers in declaration order.
-     */
-    suspend fun fetchLatestRate(): Result<Double> {
+    suspend fun fetchLatestRate(base: String, quote: String): Result<Double> {
         val orderedProviders = orderedByPreference(all)
         var lastError: Throwable = RuntimeException("All providers failed")
         for (provider in orderedProviders) {
-            val result = provider.fetchLatestRate()
+            val result = provider.fetchLatestRate(base, quote)
             if (result.isSuccess) return result
             lastError = result.exceptionOrNull() ?: lastError
         }
         return Result.failure(lastError)
     }
 
-    /**
-     * Fetches a historical daily series. Respects the preferred provider if it supports
-     * time series; otherwise falls back to the first capable provider.
-     */
-    suspend fun fetchSeries(from: LocalDate, to: LocalDate): Result<List<RatePoint>> {
+    suspend fun fetchSeries(base: String, quote: String, from: LocalDate, to: LocalDate): Result<List<RatePoint>> {
         val orderedProviders = orderedByPreference(seriesCapable)
         var lastError: Throwable = RuntimeException("No providers support time series")
         for (provider in orderedProviders) {
-            val result = provider.fetchSeries(from, to)
+            val result = provider.fetchSeries(base, quote, from, to)
             if (result.isSuccess) return result
             lastError = result.exceptionOrNull() ?: lastError
         }

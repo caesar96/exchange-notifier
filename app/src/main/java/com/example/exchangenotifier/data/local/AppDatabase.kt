@@ -7,7 +7,7 @@ import com.example.exchangenotifier.data.local.entity.RateSnapshotEntity
 
 @Database(
     entities = [RateSnapshotEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

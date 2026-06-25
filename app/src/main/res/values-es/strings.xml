@@ -37,6 +37,12 @@
     <string name="clear">Limpiar</string>
     <string name="cancel">Cancelar</string>
 
+    <!-- Currency pair picker -->
+    <string name="select_pair">Seleccionar par de divisas</string>
+    <string name="base_currency">Base</string>
+    <string name="quote_currency">Cotización</string>
+    <string name="select">Seleccionar</string>
+
     <!-- Data source -->
     <string name="section_data_source">FUENTE DE DATOS</string>
     <string name="provider_auto">Auto</string>
@@ -48,9 +54,9 @@
 
     <!-- Notifications -->
     <string name="notification_channel_name">Alertas de tipo de cambio</string>
-    <string name="notification_channel_desc">Avisa cuando USD/MXN cruza tus umbrales</string>
-    <string name="notification_above_title">USD/MXN subió por encima del umbral</string>
+    <string name="notification_channel_desc">Avisa cuando un tipo de cambio cruza tus umbrales</string>
+    <string name="notification_above_title">%1$s subió por encima del umbral</string>
     <string name="notification_above_body">Tipo de cambio: %1$s (umbral superior: %2$s)</string>
-    <string name="notification_below_title">USD/MXN bajó por debajo del umbral</string>
+    <string name="notification_below_title">%1$s bajó por debajo del umbral</string>
     <string name="notification_below_body">Tipo de cambio: %1$s (umbral inferior: %2$s)</string>
 </resources>

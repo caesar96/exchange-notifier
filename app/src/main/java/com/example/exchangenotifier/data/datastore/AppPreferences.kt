@@ -1,6 +1,7 @@
 package com.example.exchangenotifier.data.datastore
 
 import com.example.exchangenotifier.data.provider.CompositeRateProvider
+import com.example.exchangenotifier.domain.model.CurrencyPair
 
 data class AppPreferences(
     val upperThreshold: Double?,
@@ -12,6 +13,6 @@ data class AppPreferences(
     val wasAboveUpper: Boolean,
     val wasBelowLower: Boolean,
     val historyRetentionDays: Int,
-    /** ID of the preferred data provider; "auto" = try all in order. */
     val preferredProvider: String,
+    val selectedPairKey: String,
 )

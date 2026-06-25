@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,11 +18,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,15 +35,18 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -59,6 +66,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.exchangenotifier.R
+import com.example.exchangenotifier.domain.model.Currency
+import com.example.exchangenotifier.domain.model.CurrencyPair
 import com.example.exchangenotifier.ui.theme.NegativeDark
 import com.example.exchangenotifier.ui.theme.NegativeLight
 import com.example.exchangenotifier.ui.theme.PositiveDark
@@ -71,6 +80,10 @@ import java.time.format.DateTimeFormatter
 fun MainScreen(onNavigateToSettings: () -> Unit) {
     val viewModel: MainViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val selectedPair by viewModel.selectedPair.collectAsState()
+
+    var showPairPicker by remember { mutableStateOf(false) }
 
     val permLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -84,7 +97,23 @@ fun MainScreen(onNavigateToSettings: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.pair_label)) },
+                title = {
+                    Row(
+                        modifier = Modifier.clickable { showPairPicker = true },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = selectedPair.label,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Spacer(Modifier.width(2.dp))
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = stringResource(R.string.select_pair),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.settings))
@@ -132,6 +161,7 @@ fun MainScreen(onNavigateToSettings: () -> Unit) {
             is MainUiState.Success -> {
                 SuccessContent(
                     state = state,
+                    isRefreshing = isRefreshing,
                     onPeriodSelected = viewModel::onPeriodSelected,
                     onRefresh = viewModel::refresh,
                     modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -139,11 +169,88 @@ fun MainScreen(onNavigateToSettings: () -> Unit) {
             }
         }
     }
+
+    if (showPairPicker) {
+        PairPickerDialog(
+            currentPair = selectedPair,
+            onDismiss = { showPairPicker = false },
+            onPairSelected = { pair ->
+                viewModel.selectPair(pair)
+                showPairPicker = false
+            },
+        )
+    }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PairPickerDialog(
+    currentPair: CurrencyPair,
+    onDismiss: () -> Unit,
+    onPairSelected: (CurrencyPair) -> Unit,
+) {
+    var selectedBase  by remember { mutableStateOf(currentPair.base) }
+    var selectedQuote by remember { mutableStateOf(currentPair.quote) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.select_pair)) },
+        text = {
+            Column {
+                Text(
+                    stringResource(R.string.base_currency),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Currency.entries.forEach { currency ->
+                        FilterChip(
+                            selected = currency == selectedBase,
+                            onClick = { selectedBase = currency },
+                            label = { Text("${currency.flag} ${currency.code}") },
+                        )
+                    }
+                }
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    stringResource(R.string.quote_currency),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Currency.entries.forEach { currency ->
+                        FilterChip(
+                            selected = currency == selectedQuote,
+                            onClick = { selectedQuote = currency },
+                            label = { Text("${currency.flag} ${currency.code}") },
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onPairSelected(CurrencyPair(selectedBase, selectedQuote)) },
+                enabled = selectedBase != selectedQuote,
+            ) {
+                Text(stringResource(R.string.select))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessContent(
     state: MainUiState.Success,
+    isRefreshing: Boolean,
     onPeriodSelected: (ChartPeriod) -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
@@ -152,21 +259,25 @@ private fun SuccessContent(
     val positiveColor = if (isDark) PositiveDark else PositiveLight
     val negativeColor = if (isDark) NegativeDark else NegativeLight
 
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier,
+    ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.height(16.dp))
 
-        // ── Rate ─────────────────────────────────────────────────────────────
         Text(
             text = "%.4f".format(state.rate),
             style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Bold),
         )
 
-        // ── Change ───────────────────────────────────────────────────────────
         state.change?.let { change ->
             val isPositive = change >= 0
             val changeColor = if (isPositive) positiveColor else negativeColor
@@ -179,7 +290,6 @@ private fun SuccessContent(
             )
         }
 
-        // ── Last updated ──────────────────────────────────────────────────────
         val updatedStr = remember(state.lastUpdated) {
             DateTimeFormatter.ofPattern("HH:mm:ss")
                 .format(state.lastUpdated.atZone(ZoneId.systemDefault()))
@@ -192,7 +302,6 @@ private fun SuccessContent(
 
         Spacer(Modifier.height(24.dp))
 
-        // ── Period selector ───────────────────────────────────────────────────
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -208,7 +317,6 @@ private fun SuccessContent(
 
         Spacer(Modifier.height(8.dp))
 
-        // ── Chart ─────────────────────────────────────────────────────────────
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -222,13 +330,7 @@ private fun SuccessContent(
         }
 
         Spacer(Modifier.height(16.dp))
-
-        // ── Refresh ───────────────────────────────────────────────────────────
-        OutlinedButton(onClick = onRefresh, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.refresh))
-        }
+    }
     }
 }
 
@@ -267,14 +369,12 @@ private fun RateChart(
         fun xAt(i: Int) = chartLeft + if (points.size <= 1) chartW / 2f else chartW * i / (points.size - 1)
         fun yAt(v: Float) = chartTop + chartH * (1f - (v - minVal) / range)
 
-        // Line path
         val linePath = Path()
         points.forEachIndexed { i, pt ->
             val x = xAt(i); val y = yAt(pt.value)
             if (i == 0) linePath.moveTo(x, y) else linePath.lineTo(x, y)
         }
 
-        // Area fill
         val fillPath = Path().apply {
             addPath(linePath)
             lineTo(xAt(points.lastIndex), chartBottom)
@@ -289,15 +389,12 @@ private fun RateChart(
             )
         )
 
-        // Line stroke
         drawPath(linePath, lineColor, style = Stroke(2.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
 
-        // Last-point dot
         val lx = xAt(points.lastIndex); val ly = yAt(points.last().value)
         drawCircle(lineColor.copy(alpha = 0.2f), 7.dp.toPx(), center = Offset(lx, ly))
         drawCircle(lineColor, 3.5.dp.toPx(), center = Offset(lx, ly))
 
-        // Y-axis labels
         val yPaint = android.graphics.Paint().apply {
             color = labelColorArgb; textSize = textSizePx; isAntiAlias = true
             textAlign = android.graphics.Paint.Align.RIGHT
@@ -307,7 +404,6 @@ private fun RateChart(
             c.nativeCanvas.drawText("%.2f".format(minVal), labelW - 4.dp.toPx(), chartBottom, yPaint)
         }
 
-        // X-axis labels
         if (points.size >= 2) {
             val xPaint = android.graphics.Paint().apply {
                 color = labelColorArgb; textSize = textSizePx; isAntiAlias = true

@@ -3,6 +3,7 @@ package com.example.exchangenotifier.data.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.exchangenotifier.data.provider.CompositeRateProvider
+import com.example.exchangenotifier.domain.model.CurrencyPair
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -23,6 +24,7 @@ class PreferencesRepository @Inject constructor(
         val WAS_BELOW_LOWER        = booleanPreferencesKey("was_below_lower")
         val HISTORY_RETENTION_DAYS = intPreferencesKey("history_retention_days")
         val PREFERRED_PROVIDER     = stringPreferencesKey("preferred_provider")
+        val SELECTED_PAIR          = stringPreferencesKey("selected_pair")
     }
 
     val appPreferences: Flow<AppPreferences> = dataStore.data.map { prefs ->
@@ -37,6 +39,7 @@ class PreferencesRepository @Inject constructor(
             wasBelowLower        = prefs[Keys.WAS_BELOW_LOWER]        ?: false,
             historyRetentionDays = prefs[Keys.HISTORY_RETENTION_DAYS] ?: 7,
             preferredProvider    = prefs[Keys.PREFERRED_PROVIDER]     ?: CompositeRateProvider.PROVIDER_AUTO,
+            selectedPairKey     = prefs[Keys.SELECTED_PAIR]          ?: CurrencyPair.DEFAULT.key,
         )
     }
 
@@ -62,6 +65,9 @@ class PreferencesRepository @Inject constructor(
 
     suspend fun setPreferredProvider(id: String) =
         dataStore.edit { it[Keys.PREFERRED_PROVIDER] = id }
+
+    suspend fun setSelectedPair(key: String) =
+        dataStore.edit { it[Keys.SELECTED_PAIR] = key }
 
     suspend fun updateRateCrossState(rate: Double, aboveUpper: Boolean, belowLower: Boolean) =
         dataStore.edit { prefs ->

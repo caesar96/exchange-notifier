@@ -2,6 +2,7 @@ package com.example.exchangenotifier.ui.main
 
 import androidx.annotation.StringRes
 import com.example.exchangenotifier.R
+import com.example.exchangenotifier.domain.model.CurrencyPair
 import java.time.Instant
 
 enum class ChartPeriod(@StringRes val labelRes: Int) {
@@ -23,6 +24,7 @@ sealed interface MainUiState {
         val lastUpdated: Instant,
         val chartPoints: List<ChartPoint>,
         val selectedPeriod: ChartPeriod,
+        val selectedPair: CurrencyPair,
     ) : MainUiState
     data class Error(val message: String, val lastRate: Double?) : MainUiState
 }
