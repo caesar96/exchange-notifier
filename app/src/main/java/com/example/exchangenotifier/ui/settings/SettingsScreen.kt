@@ -2,6 +2,8 @@ package com.example.exchangenotifier.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -49,8 +52,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.exchangenotifier.R
+import com.example.exchangenotifier.data.provider.CompositeRateProvider
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -61,14 +65,12 @@ fun SettingsScreen(onBack: () -> Unit) {
     var showClearDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(prefs.upperThreshold) {
-        if (upperText.isEmpty() && prefs.upperThreshold != null) {
+        if (upperText.isEmpty() && prefs.upperThreshold != null)
             upperText = prefs.upperThreshold.toString()
-        }
     }
     LaunchedEffect(prefs.lowerThreshold) {
-        if (lowerText.isEmpty() && prefs.lowerThreshold != null) {
+        if (lowerText.isEmpty() && prefs.lowerThreshold != null)
             lowerText = prefs.lowerThreshold.toString()
-        }
     }
 
     Scaffold(
@@ -94,12 +96,7 @@ fun SettingsScreen(onBack: () -> Unit) {
         ) {
 
             // ── Alerts ─────────────────────────────────────────────────────────
-            Text(
-                stringResource(R.string.section_alerts),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(Modifier.height(2.dp))
+            SectionLabel(stringResource(R.string.section_alerts))
 
             Card(Modifier.fillMaxWidth()) {
                 Row(Modifier.padding(16.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -143,14 +140,42 @@ fun SettingsScreen(onBack: () -> Unit) {
 
             Spacer(Modifier.height(8.dp))
 
-            // ── Monitoring ─────────────────────────────────────────────────────
-            Text(
-                stringResource(R.string.section_monitoring),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(Modifier.height(2.dp))
+            // ── Data source ────────────────────────────────────────────────────
+            SectionLabel(stringResource(R.string.section_data_source))
 
+            // Chips wrap onto a new line when they don't all fit in one row
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                FilterChip(
+                    selected = prefs.preferredProvider == CompositeRateProvider.PROVIDER_AUTO,
+                    onClick = { viewModel.setPreferredProvider(CompositeRateProvider.PROVIDER_AUTO) },
+                    label = { Text(stringResource(R.string.provider_auto)) },
+                )
+                viewModel.providers.forEach { provider ->
+                    val noSeries = !provider.supportsTimeSeries
+                    FilterChip(
+                        selected = prefs.preferredProvider == provider.id,
+                        onClick = { viewModel.setPreferredProvider(provider.id) },
+                        label = {
+                            Column {
+                                Text(provider.displayName)
+                                if (noSeries) Text(
+                                    stringResource(R.string.provider_no_series),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        },
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // ── Monitoring ─────────────────────────────────────────────────────
+            SectionLabel(stringResource(R.string.section_monitoring))
             Text(stringResource(R.string.check_interval), style = MaterialTheme.typography.bodyMedium)
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -171,16 +196,16 @@ fun SettingsScreen(onBack: () -> Unit) {
                 Text(stringResource(R.string.check_now))
             }
 
+            OutlinedButton(onClick = { viewModel.testNotification() }, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Default.Notifications, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.test_notification))
+            }
+
             Spacer(Modifier.height(8.dp))
 
             // ── History ────────────────────────────────────────────────────────
-            Text(
-                stringResource(R.string.section_history),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(Modifier.height(2.dp))
-
+            SectionLabel(stringResource(R.string.section_history))
             Text(
                 stringResource(R.string.retain_days, prefs.historyRetentionDays),
                 style = MaterialTheme.typography.bodyMedium,
@@ -222,4 +247,13 @@ fun SettingsScreen(onBack: () -> Unit) {
             },
         )
     }
+}
+
+@Composable
+private fun SectionLabel(text: String) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.primary,
+    )
 }

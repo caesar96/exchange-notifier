@@ -28,6 +28,7 @@
     <string name="section_monitoring">MONITOREO</string>
     <string name="check_interval">Intervalo de verificación</string>
     <string name="check_now">Verificar ahora</string>
+    <string name="test_notification">Probar notificación</string>
     <string name="section_history">HISTORIAL</string>
     <string name="retain_days">Retener datos: %d días</string>
     <string name="clear_history">Limpiar historial</string>
@@ -35,6 +36,15 @@
     <string name="clear_history_message">Se eliminarán todos los registros de tipo de cambio guardados localmente.</string>
     <string name="clear">Limpiar</string>
     <string name="cancel">Cancelar</string>
+
+    <!-- Data source -->
+    <string name="section_data_source">FUENTE DE DATOS</string>
+    <string name="provider_auto">Auto</string>
+    <string name="provider_no_series">(solo actual)</string>
+
+    <!-- Test notification -->
+    <string name="notification_test_title">Notificación de prueba</string>
+    <string name="notification_test_body">Las alertas funcionan correctamente ✓</string>
 
     <!-- Notifications -->
     <string name="notification_channel_name">Alertas de tipo de cambio</string>

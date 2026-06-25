@@ -2,6 +2,7 @@ package com.example.exchangenotifier.data.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.example.exchangenotifier.data.provider.CompositeRateProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class PreferencesRepository @Inject constructor(
         val WAS_ABOVE_UPPER        = booleanPreferencesKey("was_above_upper")
         val WAS_BELOW_LOWER        = booleanPreferencesKey("was_below_lower")
         val HISTORY_RETENTION_DAYS = intPreferencesKey("history_retention_days")
+        val PREFERRED_PROVIDER     = stringPreferencesKey("preferred_provider")
     }
 
     val appPreferences: Flow<AppPreferences> = dataStore.data.map { prefs ->
@@ -33,7 +35,8 @@ class PreferencesRepository @Inject constructor(
             lastKnownRate        = prefs[Keys.LAST_KNOWN_RATE],
             wasAboveUpper        = prefs[Keys.WAS_ABOVE_UPPER]        ?: false,
             wasBelowLower        = prefs[Keys.WAS_BELOW_LOWER]        ?: false,
-            historyRetentionDays = prefs[Keys.HISTORY_RETENTION_DAYS] ?: 7
+            historyRetentionDays = prefs[Keys.HISTORY_RETENTION_DAYS] ?: 7,
+            preferredProvider    = prefs[Keys.PREFERRED_PROVIDER]     ?: CompositeRateProvider.PROVIDER_AUTO,
         )
     }
 
@@ -57,7 +60,9 @@ class PreferencesRepository @Inject constructor(
     suspend fun setHistoryRetentionDays(days: Int) =
         dataStore.edit { it[Keys.HISTORY_RETENTION_DAYS] = days }
 
-    /** Called by the worker after each poll to persist state for the next crossing check. */
+    suspend fun setPreferredProvider(id: String) =
+        dataStore.edit { it[Keys.PREFERRED_PROVIDER] = id }
+
     suspend fun updateRateCrossState(rate: Double, aboveUpper: Boolean, belowLower: Boolean) =
         dataStore.edit { prefs ->
             prefs[Keys.LAST_KNOWN_RATE] = rate

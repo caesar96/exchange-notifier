@@ -28,6 +28,7 @@
     <string name="section_monitoring">MONITORING</string>
     <string name="check_interval">Check interval</string>
     <string name="check_now">Check now</string>
+    <string name="test_notification">Test notification</string>
     <string name="section_history">HISTORY</string>
     <string name="retain_days">Retain data: %d days</string>
     <string name="clear_history">Clear history</string>
@@ -35,6 +36,15 @@
     <string name="clear_history_message">All locally stored exchange rate records will be deleted.</string>
     <string name="clear">Clear</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Data source -->
+    <string name="section_data_source">DATA SOURCE</string>
+    <string name="provider_auto">Auto</string>
+    <string name="provider_no_series">(latest only)</string>
+
+    <!-- Test notification -->
+    <string name="notification_test_title">Test notification</string>
+    <string name="notification_test_body">Alerts are working correctly ✓</string>
 
     <!-- Notifications -->
     <string name="notification_channel_name">Exchange Rate Alerts</string>

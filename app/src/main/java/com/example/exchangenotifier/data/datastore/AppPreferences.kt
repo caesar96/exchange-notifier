@@ -1,14 +1,17 @@
 package com.example.exchangenotifier.data.datastore
 
-/** Snapshot of all user-configurable settings read from DataStore. */
+import com.example.exchangenotifier.data.provider.CompositeRateProvider
+
 data class AppPreferences(
-    val upperThreshold: Double?,        // null = not configured
-    val lowerThreshold: Double?,        // null = not configured
+    val upperThreshold: Double?,
+    val lowerThreshold: Double?,
     val upperAlertEnabled: Boolean,
     val lowerAlertEnabled: Boolean,
-    val pollIntervalMinutes: Int,       // minimum 15 (WorkManager constraint)
-    val lastKnownRate: Double?,         // persisted across worker runs for cross detection
-    val wasAboveUpper: Boolean,         // anti-spam: was rate above upper threshold last run?
-    val wasBelowLower: Boolean,         // anti-spam: was rate below lower threshold last run?
-    val historyRetentionDays: Int       // how many days of Room snapshots to keep
+    val pollIntervalMinutes: Int,
+    val lastKnownRate: Double?,
+    val wasAboveUpper: Boolean,
+    val wasBelowLower: Boolean,
+    val historyRetentionDays: Int,
+    /** ID of the preferred data provider; "auto" = try all in order. */
+    val preferredProvider: String,
 )

@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.exchangenotifier.data.datastore.AppPreferences
 import com.example.exchangenotifier.data.datastore.PreferencesRepository
+import com.example.exchangenotifier.data.provider.CompositeRateProvider
+import com.example.exchangenotifier.domain.provider.RateProvider
 import com.example.exchangenotifier.domain.repository.ExchangeRateRepository
+import com.example.exchangenotifier.notification.NotificationHelper
 import com.example.exchangenotifier.worker.WorkScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,6 +22,8 @@ class SettingsViewModel @Inject constructor(
     private val prefsRepository: PreferencesRepository,
     private val repository: ExchangeRateRepository,
     private val workScheduler: WorkScheduler,
+    private val notificationHelper: NotificationHelper,
+    compositeProvider: CompositeRateProvider,
 ) : ViewModel() {
 
     val prefs: StateFlow<AppPreferences> = prefsRepository.appPreferences.stateIn(
@@ -28,9 +33,14 @@ class SettingsViewModel @Inject constructor(
             upperThreshold = null, lowerThreshold = null,
             upperAlertEnabled = false, lowerAlertEnabled = false,
             pollIntervalMinutes = 15, lastKnownRate = null,
-            wasAboveUpper = false, wasBelowLower = false, historyRetentionDays = 7,
+            wasAboveUpper = false, wasBelowLower = false,
+            historyRetentionDays = 7,
+            preferredProvider = CompositeRateProvider.PROVIDER_AUTO,
         )
     )
+
+    /** All registered providers plus the "auto" sentinel. */
+    val providers: List<RateProvider> = compositeProvider.all
 
     fun setUpperThreshold(text: String) = viewModelScope.launch {
         prefsRepository.setUpperThreshold(text.toDoubleOrNull())
@@ -59,7 +69,13 @@ class SettingsViewModel @Inject constructor(
         prefsRepository.setHistoryRetentionDays(days)
     }
 
+    fun setPreferredProvider(id: String) = viewModelScope.launch {
+        prefsRepository.setPreferredProvider(id)
+    }
+
     fun runCheck() = workScheduler.runOnce()
+
+    fun testNotification() = notificationHelper.sendTestNotification()
 
     fun clearHistory() = viewModelScope.launch {
         repository.clearLocalHistory()
